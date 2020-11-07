@@ -1,5 +1,5 @@
 # TwitchChatBot
-Send and receive Data over Twitch IRC to make a chat bot
+Creates a TCP server using blocking sockets [winsock] to send and receive data over Twitch IRC to make a chat bot
 
 ## Program Commands
 You must use ":" at the start of every command in the program. Note that the chat message might go over the command. Just ignore and continue typing in the characters you want.
