@@ -45,7 +45,7 @@ for (int j = 0; j < bytesReceived; j++)
   }
 }
 ```
-* bytesReceived = number of characters of the chat message.
+* bytesReceived = number of characters in the chat message.
 
 * text = std::string of the whole chat message including "!" start
 
@@ -53,7 +53,7 @@ for (int j = 0; j < bytesReceived; j++)
 
 * chat = string of the message
 
-* line = vector consisting of the chat messages.
+* lines = vector consisting of the chat messages.
 
 ## Twitch API Documentation
 https://dev.twitch.tv/docs/irc/guide
