@@ -12,13 +12,13 @@ You must use ":" at the start of every command in the program. Note that the cha
 |:[message]     |Send a message to chat |:Nice stream!  |
 |:quit          |Quits the program      |:quit          |
 
-All inputs must be in lowercase, including the channel name. 
+- All inputs must be in lowercase, including the channel name. 
 
-Don't use the web address, use the chanel name!
+- Don't use the web address, use the chanel name!
 
-Prints "Listening..." if no chat messages are received over TCP. Timeout is 10 seconds.
+- Prints "Listening..." if no chat messages are received over TCP. Timeout is 10 seconds.
 
-Change int val = [value] in Socket::SetSocketOption(param, param) in Socket.cpp to change the timeout timer.
+- Change int val = [value] in Socket::SetSocketOption(param, param) in Socket.cpp to change the timeout timer.
 
 ## Using data
 ```C++
@@ -45,15 +45,15 @@ for (int j = 0; j < bytesReceived; j++)
   }
 }
 ```
-bytesReceived = number of characters of the chat message.
+* bytesReceived = number of characters of the chat message.
 
-text = std::string of the whole chat message including "!" start
+* text = std::string of the whole chat message including "!" start
 
-sUsername = string of the user.
+* sUsername = string of the user.
 
-chat = string of the message
+* chat = string of the message
 
-line = vector consisting of the chat messages.
+* line = vector consisting of the chat messages.
 
 ## Twitch API Documentation
 https://dev.twitch.tv/docs/irc/guide
