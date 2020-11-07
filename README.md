@@ -1,5 +1,12 @@
 # TwitchChatBot
 Creates a TCP client using blocking sockets [winsock] to send and receive data over Twitch IRC to make a chat bot. Displays chat messages.
+### Update (07/11/2020)
+Implemented Markov Chain to generate a sentence of what has been said on chat. Note that the bot has zero restrictions in the data it will parse. It will take in deleted messages. It will also still generate @s, !s/commands and emotes and is susceptible to bad language. Use at your own risk. 
+
+- Type :quit for the generated sentence on console. It will use the data received in the time frame from once you join a channel to when you type ":quit" 
+- All chat messages wll be printed into [sample.txt]. Press Ctrl + A and delete all content of the text file to refresh the data.
+
+- Potential updates include blacklisted words, better commands system and a cleaner console display. 
 
 ## Program Commands
 You must use ":" at the start of every command in the program. Note that the chat message might go over the command. Just ignore and continue typing in the characters you want.
