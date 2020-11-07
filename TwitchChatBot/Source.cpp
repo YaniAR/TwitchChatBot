@@ -6,12 +6,26 @@
 #include <mutex>
 #include <chrono>
 #include <atomic>
+#include <random>
+#include <ctime>
+#include <map>
+#include <fstream>
 
 template<typename T>
 void pop_front(std::vector<T>& v)
 {
 	assert(!v.empty());
 	v.erase(v.begin());
+}
+
+namespace Randomiser
+{
+	std::mt19937 generator{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
+}
+int getRandomNumber(int min, int max)
+{
+	std::uniform_int_distribution<int> rand{ min, max };
+	return rand(Randomiser::generator);
 }
 
 class Client
@@ -132,6 +146,29 @@ public:
 	{
 		running = false;
 		connected = false;
+
+		std::map<std::string, std::vector<std::string>> gram{};
+
+		std::ifstream wordStream{ "sample.txt" };
+		std::string fWord;
+		std::string sWord;
+
+		int i{ 0 };
+		while (wordStream)
+		{
+			wordStream >> fWord;
+			if (i != 0)
+				gram[sWord].push_back(fWord);
+			wordStream >> sWord;
+			gram[fWord].push_back(sWord);
+			if (i == 0)
+				i++;
+		}
+
+		markovIt(gram);
+		std::cout << '\n';
+
+
 		errorMessage();
 	}
 
@@ -207,12 +244,49 @@ public:
 		}
 	}
 
+	void markovIt(const std::map<std::string, std::vector<std::string>>& m)
+	{
+		std::string temp{};
+		std::vector<std::string> possibilities{};
+		std::string next{};
+
+		int i{ 0 };
+		int randomNumber{ getRandomNumber(0, m.size()) };
+		for (const auto& n : m)
+		{
+			if (i == randomNumber)
+			{
+				temp = n.first;
+			}
+			++i;
+		}
+		
+		std::cout << "===GENERATED===\n";
+		auto found{ m.find(temp) };
+		i = 0;
+		while (found != m.end())
+		{
+			// 50 words
+			if (i == 50)
+				break;
+
+			possibilities = found->second;
+			next = possibilities.at(getRandomNumber(0, possibilities.size() - 1));
+
+			std::cout << temp << " ";
+			temp = next;
+
+			found = m.find(temp);
+			++i;
+		}
+	}
+
 	void serverToClient()
 	{
 		char buffer[(int)MAXBYTE]{};
 		std::string text{};
 		std::vector<std::string> lines{ "", "", "" };
-
+		
 		int bytesReceived{ 0 };
 		while (running)
 		{
@@ -221,6 +295,7 @@ public:
 				std::lock_guard<std::mutex> locker{ _inMutex };
 
 				s.Recv(buffer, (int)MAXBYTE, flag, bytesReceived);
+				std::fstream openData("sample.txt", std::fstream::out | std::fstream::app);
 				for (int j = 0; j < bytesReceived; j++)
 				{
 					text.append(1, buffer[j]);
@@ -235,6 +310,8 @@ public:
 						{
 							std::string chat{ text.substr(n + 1) };
 							std::cout << sUserName.c_str() << ": " << chat.c_str() << '\n';
+
+							openData << chat << '\n';
 
 							pop_front(lines);
 							lines.push_back(sUserName + ": " + chat);
@@ -266,3 +343,4 @@ int main()
 
 	return 0;
 }
+
