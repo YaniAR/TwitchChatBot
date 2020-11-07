@@ -12,6 +12,8 @@ You must use ":" at the start of every command in the program. Note that the cha
 |:[message]     |Send a message to chat |:Nice stream!  |
 |:quit          |Quits the program      |:quit          |
 
+- You must be signed into Twitch and then get a OAuth token
+
 - All inputs must be in lowercase, including the channel name. 
 
 - Don't use the web address, use the chanel name!
