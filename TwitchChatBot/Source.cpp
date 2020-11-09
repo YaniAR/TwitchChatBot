@@ -11,6 +11,13 @@
 #include <map>
 #include <fstream>
 
+namespace Randomiser
+{
+	std::mt19937 generator{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
+}
+
+using namespace Randomiser;
+
 template<typename T>
 void pop_front(std::vector<T>& v)
 {
@@ -18,14 +25,17 @@ void pop_front(std::vector<T>& v)
 	v.erase(v.begin());
 }
 
-namespace Randomiser
-{
-	std::mt19937 generator{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
+template<typename T>
+auto getRandomNumber(T max) {
+    std::uniform_int_distribution<T> rand{ 0, max };
+    return rand(generator);
 }
-int getRandomNumber(int min, int max)
+
+template<typename T>
+static auto& getRandomElement(const T& container)
 {
-	std::uniform_int_distribution<int> rand{ min, max };
-	return rand(Randomiser::generator);
+	std::uniform_int_distribution<size_t> rand{ 0, container.size() - 1 };
+	return *std::next(std::begin(container), rand(generator));
 }
 
 class Client
@@ -133,6 +143,28 @@ public:
 		inThread.join();
 	}
 
+	void markovIt(const std::map<std::string, std::vector<std::string>>& m)
+	{
+		std::cout << "===GENERATED===\n";
+		// Get the initial word
+		auto word = getRandomElement(m).first;
+
+		for (int i = 0; i < 255; ++i)
+		{
+			std::cout << word << " ";
+
+			// Find the entry in m that matches word
+			auto entry = m.find(word);
+			if (entry == m.end())
+				break;
+
+			
+
+			// Select a random word from the list of possibilities
+			word = getRandomElement(entry->second);
+		}
+	}
+
 	static void errorMessage()
 	{
 		// Socket timeout is 5 seconds. Change val to change timeout time at Socket::Recv()
@@ -153,16 +185,13 @@ public:
 		std::string fWord;
 		std::string sWord;
 
-		int i{ 0 };
+		wordStream >> fWord;
+
 		while (wordStream)
 		{
-			wordStream >> fWord;
-			if (i != 0)
-				gram[sWord].push_back(fWord);
 			wordStream >> sWord;
 			gram[fWord].push_back(sWord);
-			if (i == 0)
-				i++;
+			fWord = sWord;
 		}
 
 		markovIt(gram);
@@ -189,6 +218,8 @@ public:
 		std::getline(std::cin, messageToSend);
 		SendMessage(messageToSend);
 	}
+
+
 
 	void clientToServer()
 	{
@@ -244,42 +275,6 @@ public:
 		}
 	}
 
-	void markovIt(const std::map<std::string, std::vector<std::string>>& m)
-	{
-		std::string temp{};
-		std::vector<std::string> possibilities{};
-		std::string next{};
-
-		int i{ 0 };
-		int randomNumber{ getRandomNumber(0, m.size()) };
-		for (const auto& n : m)
-		{
-			if (i == randomNumber)
-			{
-				temp = n.first;
-			}
-			++i;
-		}
-		
-		std::cout << "===GENERATED===\n";
-		auto found{ m.find(temp) };
-		i = 0;
-		while (found != m.end())
-		{
-			// 50 words
-			if (i == 50)
-				break;
-
-			possibilities = found->second;
-			next = possibilities.at(getRandomNumber(0, possibilities.size() - 1));
-
-			std::cout << temp << " ";
-			temp = next;
-
-			found = m.find(temp);
-			++i;
-		}
-	}
 
 	void serverToClient()
 	{
