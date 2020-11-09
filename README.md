@@ -1,7 +1,7 @@
 # TwitchChatBot
 Creates a TCP client using blocking sockets [winsock] to send and receive data over Twitch IRC to make a chat bot. Displays chat messages and generates a message based on what it has learned from chat.
 ### Update(09/11/2020)
-- Improved and cleaner algorithm. Implemented template functions for all container types and values.
+- Improved and cleaner algorithm for Markov Chain. Implemented template functions for all container types and values.
 ### Update (07/11/2020)
 Implemented Markov Chain to generate a sentence of what has been said on chat. Note that the bot has zero restrictions in the data it will parse. It will take in deleted messages. It will also still generate @s, !s/commands and emotes and is susceptible to bad language. Use at your own risk. 
 
